@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Discord Profile | Premium</title>
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            background: '#09090B',
+            surface: '#111113',
+            primary: '#5865F2',
+            accent: '#8B5CF6',
+            text: '#FAFAFA',
+            muted: '#A1A1AA',
+          },
+        },
+      },
+    };
+  </script>
+  <!-- Motion (Framer Motion alternative) -->
+  <script src="https://cdn.jsdelivr.net/npm/motion@11.12.0/dist/motion.min.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #09090B;
+      color: #FAFAFA;
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 1rem;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+    }
+    .glass-hover {
+      transition: all 0.3s ease;
+    }
+    .glass-hover:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 8px 40px rgba(88, 101, 242, 0.15);
+      transform: translateY(-2px);
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, #5865F2, #8B5CF6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .skeleton {
+      animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 0.75rem;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .animate-gradient {
+      background-size: 200% 200%;
+      animation: gradient-shift 8s ease infinite;
+    }
+    @keyframes gradient-shift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .dot-online { background: #22c55e; }
+    .dot-idle { background: #eab308; }
+    .dot-dnd { background: #ef4444; }
+    .dot-offline { background: #A1A1AA; }
+  </style>
+</head>
+<body class="min-h-screen antialiased">
+  <div class="max-w-4xl mx-auto px-4 pb-16">
+    <!-- Header -->
+    <header class="flex justify-between items-center py-6">
+      <div class="text-2xl font-bold gradient-text">Profile</div>
+      <nav class="text-sm text-muted">Premium</nav>
+    </header>
+
+    <!-- Main dynamic content area -->
+    <main id="app" class="flex flex-col gap-6">
+      <!-- Hero skeleton -->
+      <section class="flex flex-col items-center pt-16 pb-12 relative overflow-hidden">
+        <div class="absolute inset-0 -z-10 animate-gradient bg-gradient-to-r from-primary/20 via-accent/10 to-background opacity-30"></div>
+        <div class="w-32 h-32 rounded-full skeleton" id="avatar-skeleton"></div>
+        <div class="mt-6 text-center">
+          <div class="h-8 w-48 skeleton mx-auto" id="name-skeleton"></div>
+          <div class="h-4 w-32 skeleton mx-auto mt-2" id="username-skeleton"></div>
+          <div class="h-4 w-24 skeleton mx-auto mt-3" id="status-skeleton"></div>
+        </div>
+      </section>
+
+      <!-- Cards skeleton -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="glass-card p-6 h-40 skeleton"></div>
+        <div class="glass-card p-6 h-40 skeleton"></div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="glass-card p-6 h-40 skeleton"></div>
+        <div class="glass-card p-6 h-24 skeleton"></div>
+      </div>
+      <div class="glass-card p-6 h-32 skeleton"></div>
+    </main>
+  </div>
+
+  <script>
+    // ---- Lanyard integration ----
+    const USER_ID = '1429093326505640016';
+
+    // Decode snowflake
+    function decodeSnowflake(snowflake) {
+      const DISCORD_EPOCH = 1420070400000n;
+      const id = BigInt(snowflake);
+      const timestamp = Number(id >> 22n) + Number(DISCORD_EPOCH);
+      return new Date(timestamp);
+    }
+
+    // Helper: format time mm:ss
+    function formatTime(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    }
+
+    // State
+    let data = null;
+
+    // Render functions
+    function renderHero() {
+      const section = document.querySelector('main section');
+      if (!data) return;
+
+      const user = data.discord_user;
+      const avatarUrl = user.avatar
+        ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=256`
+        : 'https://cdn.discordapp.com/embed/avatars/0.png';
+
+      const statusMap = { online: 'Online', idle: 'Idle', dnd: 'Do Not Disturb', offline: 'Offline' };
+      const dotClass = `dot-${data.discord_status}`;
+
+      section.innerHTML = `
+        <div class="absolute inset-0 -z-10 animate-gradient bg-gradient-to-r from-primary/20 via-accent/10 to-background opacity-30"></div>
+        <div class="relative">
+          <img src="${avatarUrl}" alt="${user.global_name || user.username}" class="w-32 h-32 rounded-full ring-4 ring-primary/20 shadow-2xl shadow-primary/10 transition-transform duration-300 hover:scale-105" />
+          <div class="absolute -bottom-1 -right-1 w-7 h-7 rounded-full border-4 border-background ${dotClass}"></div>
+        </div>
+        <div class="mt-6 text-center">
+          <h1 class="text-3xl font-bold gradient-text">${user.global_name || user.username}</h1>
+          <p class="text-muted text-sm mt-1">@${user.username}${user.discriminator && user.discriminator !== '0' ? '#' + user.discriminator : ''}</p>
+          <div class="flex items-center justify-center gap-2 mt-2 text-sm text-muted">
+            <span class="w-2 h-2 rounded-full inline-block ${dotClass}"></span>
+            ${statusMap[data.discord_status]}
+          </div>
+          ${data.custom_status ? `
+            <div class="mt-3 text-sm text-muted/80 italic">
+              ${data.custom_status.emoji ? 
+                (data.custom_status.emoji.id ? 
+                  `<img src="https://cdn.discordapp.com/emojis/${data.custom_status.emoji.id}.png" class="w-4 h-4 inline" />` :
+                  `<span>${data.custom_status.emoji.name}</span>`) : ''}
+              ${data.custom_status.state || ''}
+            </div>` : ''}
+        </div>
+      `;
+
+      // Animations (motion)
+      motion.animate('.glass-card', { opacity: 1, y: 0 }, { duration: 0.5 });
+    }
+
+    function renderAboutCard() {
+      const container = document.getElementById('cards-container');
+      if (!data || !container) return;
+
+      const user = data.discord_user;
+      const creationDate = decodeSnowflake(user.id);
+      const formattedDate = creationDate.toLocaleDateString('en-US', { dateStyle: 'full' });
+
+      const card = document.createElement('div');
+      card.className = 'glass-card glass-hover p-6 flex flex-col gap-4';
+      card.innerHTML = `
+        <div class="flex items-center gap-2 text-primary">
+          <i data-lucide="info" class="w-5 h-5"></i>
+          <h2 class="font-semibold text-lg">About Me</h2>
+        </div>
+        <div class="space-y-3 text-sm text-muted">
+          <div class="flex items-center gap-3">
+            <i data-lucide="hash" class="w-4 h-4"></i>
+            <span>ID: ${user.id}</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <i data-lucide="calendar-days" class="w-4 h-4"></i>
+            <span>Created: ${formattedDate}</span>
+          </div>
+        </div>
+      `;
+      container.appendChild(card);
+    }
+
+    function renderStatsCard() {
+      const container = document.getElementById('cards-container');
+      if (!data || !container) return;
+
+      const platforms = [];
+      if (data.active_on_discord.desktop) platforms.push('Desktop');
+      if (data.active_on_discord.mobile) platforms.push('Mobile');
+      if (data.active_on_discord.web) platforms.push('Web');
+
+      const card = document.createElement('div');
+      card.className = 'glass-card glass-hover p-6 flex flex-col gap-4';
+      card.innerHTML = `
+        <div class="flex items-center gap-2 text-primary">
+          <i data-lucide="activity" class="w-5 h-5"></i>
+          <h2 class="font-semibold text-lg">Statistics</h2>
+        </div>
+        <div class="space-y-3 text-sm text-muted">
+          <div class="flex items-center justify-between">
+            <span>Active on</span>
+            <div class="flex items-center gap-2">
+              ${platforms.length > 0 ? platforms.map(p => 
+                `<span class="flex items-center gap-1 bg-white/5 px-2 py-0.5 rounded-full">
+                  ${p === 'Desktop' ? '<i data-lucide="monitor" class="w-3 h-3"></i>' : 
+                    p === 'Mobile' ? '<i data-lucide="smartphone" class="w-3 h-3"></i>' :
+                    '<i data-lucide="globe" class="w-3 h-3"></i>'} ${p}
+                </span>`
+              ).join('') : '<span class="text-muted/50">None</span>'}
+            </div>
+          </div>
+        </div>
+      `;
+      container.appendChild(card);
+    }
+
+    function renderActivityCard() {
+      const container = document.getElementById('activity-spotify-container');
+      if (!data || !container) return;
+
+      const activities = data.activities.filter(a => a.type !== 2 || !data.spotify);
+      const card = document.createElement('div');
+      card.className = 'glass-card glass-hover p-6 flex flex-col gap-4';
+      card.innerHTML = `
+        <div class="flex items-center gap-2 text-primary">
+          <i data-lucide="activity" class="w-5 h-5"></i>
+          <h2 class="font-semibold text-lg">Current Activity</h2>
+        </div>
+        ${activities.length > 0 ? `<ul class="space-y-3">${activities.map(a => `
+          <li class="flex items-center gap-3 text-sm">
+            <span class="text-primary">${a.type === 0 ? '<i data-lucide="gamepad-2" class="w-4 h-4"></i>' : '<i data-lucide="monitor" class="w-4 h-4"></i>'}</span>
+            <div>
+              <p class="font-medium text-text">${a.name}</p>
+              ${a.details ? `<p class="text-muted/80">${a.details}</p>` : ''}
+              ${a.state ? `<p class="text-muted/60">${a.state}</p>` : ''}
+            </div>
+          </li>`).join('')}</ul>` : '<p class="text-sm text-muted/50">No active activities</p>'}
+      `;
+      container.appendChild(card);
+    }
+
+    function renderSpotifyCard() {
+      const container = document.getElementById('activity-spotify-container');
+      if (!data || !container || !data.spotify) return;
+
+      const spotify = data.spotify;
+      const card = document.createElement('div');
+      card.className = 'glass-card glass-hover p-4 flex gap-4 items-center';
+      card.id = 'spotify-card';
+      card.innerHTML = `
+        <div class="relative flex-shrink-0">
+          <img src="${spotify.album_art_url}" alt="${spotify.album}" class="w-16 h-16 rounded-lg object-cover shadow-lg" />
+          <div class="absolute -bottom-1 -right-1 bg-primary rounded-full p-1">
+            <i data-lucide="music" class="w-3 h-3 text-white"></i>
+          </div>
+        </div>
+        <div class="flex-1 min-w-0">
+          <h4 class="font-semibold text-sm truncate">${spotify.song}</h4>
+          <p class="text-xs text-muted truncate">${spotify.artist}</p>
+          <div class="mt-2 h-1 bg-white/10 rounded-full overflow-hidden">
+            <div id="spotify-progress" class="h-full bg-gradient-to-r from-primary to-accent" style="width: 0%"></div>
+          </div>
+          <div class="flex justify-between text-xs text-muted mt-1">
+            <span id="spotify-current">0:00</span>
+            <span>${formatTime(Math.floor((spotify.timestamps.end - spotify.timestamps.start) / 1000))}</span>
+          </div>
+        </div>
+        <a href="https://open.spotify.com/track/${spotify.track_id}" target="_blank" class="text-muted hover:text-primary transition-colors">
+          <i data-lucide="external-link" class="w-4 h-4"></i>
+        </a>
+      `;
+      container.appendChild(card);
+      // Start progress update
+      updateSpotifyProgress();
+    }
+
+    function updateSpotifyProgress() {
+      if (!data || !data.spotify) return;
+      const spotify = data.spotify;
+      const progressBar = document.getElementById('spotify-progress');
+      const currentTimeLabel = document.getElementById('spotify-current');
+      if (!progressBar) return;
+      const update = () => {
+        const now = Date.now();
+        const duration = spotify.timestamps.end - spotify.timestamps.start;
+        const elapsed = now - spotify.timestamps.start;
+        const percent = Math.min(1, Math.max(0, elapsed / duration)) * 100;
+        progressBar.style.width = percent + '%';
+        if (currentTimeLabel) {
+          currentTimeLabel.textContent = formatTime(Math.floor(elapsed / 1000));
+        }
+      };
+      update();
+      setInterval(update, 1000);
+    }
+
+    function renderBadges() {
+      const badgesContainer = document.getElementById('badges-container');
+      if (!data || !badgesContainer) return;
+
+      const FLAG_MAP = {
+        1: 'Staff', 2: 'Partner', 4: 'HypeSquad Events', 8: 'Bug Hunter Level 1',
+        64: 'HypeSquad House 1', 128: 'HypeSquad House 2', 256: 'HypeSquad House 3',
+        16384: 'Bug Hunter Level 2', 131072: 'Early Verified Developer',
+        262144: 'Discord Certified Moderator'
+      };
+
+      const flags = data.discord_user.public_flags;
+      const badges = Object.entries(FLAG_MAP).filter(([flag]) => flags & parseInt(flag)).map(([, name]) => name);
+      if (badges.length === 0) return;
+
+      badgesContainer.innerHTML = badges.map(badge => 
+        `<span class="glass-card px-2 py-0.5 text-xs font-medium text-muted">${badge}</span>`
+      ).join('');
+      badgesContainer.className = 'flex flex-wrap gap-2 mt-4';
+    }
+
+    function renderSnowflakeDecoder() {
+      const container = document.getElementById('decoder-container');
+      if (!container) return;
+      container.innerHTML = `
+        <div class="glass-card glass-hover p-6 flex flex-col gap-4">
+          <div class="flex items-center gap-2 text-primary">
+            <i data-lucide="hash" class="w-5 h-5"></i>
+            <h2 class="font-semibold text-lg">Snowflake Decoder</h2>
+          </div>
+          <div class="flex flex-col sm:flex-row gap-3">
+            <input id="snowflake-input" type="text" placeholder="Enter Discord ID" class="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-text placeholder-muted/50 focus:outline-none focus:ring-1 focus:ring-primary flex-1" />
+            <button id="decode-btn" class="px-4 py-2 text-sm font-medium bg-primary/20 hover:bg-primary/30 rounded-lg transition-colors">Decode</button>
+          </div>
+          <div id="decode-result" class="hidden text-sm text-muted flex items-center gap-4">
+            <i data-lucide="calendar-days" class="w-4 h-4"></i><span id="decoded-date"></span>
+            <i data-lucide="clock" class="w-4 h-4 ml-4"></i><span id="decoded-time"></span>
+          </div>
+        </div>
+      `;
+      document.getElementById('decode-btn').addEventListener('click', () => {
+        const input = document.getElementById('snowflake-input').value.trim();
+        const resultDiv = document.getElementById('decode-result');
+        try {
+          const date = decodeSnowflake(input);
+          document.getElementById('decoded-date').textContent = date.toLocaleDateString('en-US', { dateStyle: 'full' });
+          document.getElementById('decoded-time').textContent = date.toLocaleTimeString();
+          resultDiv.classList.remove('hidden');
+        } catch {
+          resultDiv.classList.add('hidden');
+        }
+      });
+      lucide.createIcons();
+    }
+
+    function renderClock() {
+      const container = document.getElementById('clock-container');
+      if (!container) return;
+      container.innerHTML = `
+        <div class="glass-card glass-hover p-4 flex items-center gap-3">
+          <i data-lucide="clock" class="w-5 h-5 text-primary"></i>
+          <span id="clock-display" class="font-mono text-sm text-text"></span>
+        </div>
+      `;
+      function updateClock() {
+        const now = new Date();
+        document.getElementById('clock-display').textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      }
+      updateClock();
+      setInterval(updateClock, 1000);
+      lucide.createIcons();
+    }
+
+    // Build the whole layout after data loads
+    function buildUI() {
+      // Create inner structure
+      const main = document.getElementById('app');
+      main.innerHTML = `
+        <!-- Hero placeholder (will be filled) -->
+        <section class="relative flex flex-col items-center pt-16 pb-12 px-4 overflow-hidden"></section>
+        <!-- About & Stats grid -->
+        <div id="cards-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        <!-- Activity & Spotify grid -->
+        <div id="activity-spotify-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        <!-- Badges -->
+        <div id="badges-container" class="flex flex-wrap gap-2"></div>
+        <!-- Decoder & Clock -->
+        <div class="flex flex-col md:flex-row gap-4">
+          <div id="decoder-container" class="flex-1"></div>
+          <div id="clock-container"></div>
+        </div>
+      `;
+
+      // Render all components
+      renderHero();
+      renderAboutCard();
+      renderStatsCard();
+      renderActivityCard();
+      renderSpotifyCard();
+      renderBadges();
+      renderSnowflakeDecoder();
+      renderClock();
+
+      // Re-init Lucide icons
+      lucide.createIcons();
+
+      // Animate cards
+      document.querySelectorAll('.glass-card').forEach(card => {
+        motion.animate(card, { opacity: [0, 1], y: [20, 0] }, { duration: 0.6, delay: 0.1 });
+      });
+    }
+
+    // Initial fetch
+    fetch(`https://api.lanyard.rest/v1/users/${USER_ID}`)
+      .then(res => res.json())
+      .then(res => {
+        if (res.success) {
+          data = res.data;
+          buildUI();
+        } else {
+          document.getElementById('app').innerHTML = '<p class="text-center text-muted">User not found</p>';
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        document.getElementById('app').innerHTML = '<p class="text-center text-muted">Failed to load profile</p>';
+      });
+
+    // WebSocket for live updates
+    function connectWebSocket() {
+      const ws = new WebSocket('wss://api.lanyard.rest/socket');
+      ws.onopen = () => {
+        ws.send(JSON.stringify({ op: 2, d: { subscribe_to_id: USER_ID } }));
+      };
+      ws.onmessage = (event) => {
+        const msg = JSON.parse(event.data);
+        if ((msg.op === 1 && msg.t === 'INIT_STATE') || (msg.op === 0 && msg.t === 'PRESENCE_UPDATE')) {
+          data = msg.d;
+          // Rebuild UI with updated data
+          document.getElementById('app').innerHTML = '';
+          buildUI();
+        }
+      };
+      ws.onclose = () => setTimeout(connectWebSocket, 5000);
+    }
+    connectWebSocket();
+  </script>
+</body>
+</html>
