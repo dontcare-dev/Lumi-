@@ -1,469 +1,1178 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Discord Profile | Premium</title>
-  <!-- Tailwind CSS via CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            background: '#09090B',
-            surface: '#111113',
-            primary: '#5865F2',
-            accent: '#8B5CF6',
-            text: '#FAFAFA',
-            muted: '#A1A1AA',
-          },
-        },
-      },
-    };
-  </script>
-  <!-- Motion (Framer Motion alternative) -->
-  <script src="https://cdn.jsdelivr.net/npm/motion@11.12.0/dist/motion.min.js"></script>
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <style>
-    body {
-      font-family: 'Inter', system-ui, sans-serif;
-      background: #09090B;
-      color: #FAFAFA;
-    }
-    .glass-card {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 1rem;
-      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
-    }
-    .glass-hover {
-      transition: all 0.3s ease;
-    }
-    .glass-hover:hover {
-      background: rgba(255, 255, 255, 0.1);
-      border-color: rgba(255, 255, 255, 0.2);
-      box-shadow: 0 8px 40px rgba(88, 101, 242, 0.15);
-      transform: translateY(-2px);
-    }
-    .gradient-text {
-      background: linear-gradient(135deg, #5865F2, #8B5CF6);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .skeleton {
-      animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 0.75rem;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-    .animate-gradient {
-      background-size: 200% 200%;
-      animation: gradient-shift 8s ease infinite;
-    }
-    @keyframes gradient-shift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    .dot-online { background: #22c55e; }
-    .dot-idle { background: #eab308; }
-    .dot-dnd { background: #ef4444; }
-    .dot-offline { background: #A1A1AA; }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Discord Profile</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #09090B;
+    --surface: #111113;
+    --surface2: #18181B;
+    --border: rgba(255,255,255,0.07);
+    --primary: #5865F2;
+    --accent: #8B5CF6;
+    --green: #23A55A;
+    --yellow: #F0B232;
+    --red: #F23F42;
+    --text: #FAFAFA;
+    --muted: #A1A1AA;
+    --spotify: #1DB954;
+    --glass: rgba(255,255,255,0.04);
+    --glass-border: rgba(255,255,255,0.08);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* ── Animated background ── */
+  .bg-orbs {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+  }
+  .orb {
+    position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.18;
+    animation: floatOrb 18s ease-in-out infinite alternate;
+  }
+  .orb-1 { width: 500px; height: 500px; background: var(--primary); top: -150px; left: -100px; animation-duration: 20s; }
+  .orb-2 { width: 400px; height: 400px; background: var(--accent); bottom: -100px; right: -80px; animation-duration: 25s; animation-delay: -8s; }
+  .orb-3 { width: 300px; height: 300px; background: #3B82F6; top: 40%; left: 50%; animation-duration: 22s; animation-delay: -14s; }
+  @keyframes floatOrb {
+    from { transform: translate(0, 0) scale(1); }
+    to { transform: translate(40px, 30px) scale(1.1); }
+  }
+
+  /* ── Noise overlay ── */
+  .noise {
+    position: fixed; inset: 0; pointer-events: none; z-index: 1;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 200px;
+  }
+
+  /* ── Layout ── */
+  .page { position: relative; z-index: 2; }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    padding: 80px 20px 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0;
+  }
+
+  /* Avatar */
+  .avatar-wrap {
+    position: relative;
+    width: 130px; height: 130px;
+    margin-bottom: 24px;
+    animation: fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) both;
+  }
+  .avatar-ring {
+    position: absolute; inset: -4px;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, var(--primary), var(--accent), #3B82F6, var(--primary));
+    animation: spinRing 6s linear infinite;
+    padding: 3px;
+  }
+  @keyframes spinRing { to { transform: rotate(360deg); } }
+  .avatar-ring-inner {
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    background: var(--bg);
+  }
+  .avatar-img {
+    position: absolute;
+    inset: 4px;
+    width: calc(100% - 8px);
+    height: calc(100% - 8px);
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--surface2);
+  }
+  .status-dot {
+    position: absolute;
+    bottom: 6px; right: 6px;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 3px solid var(--bg);
+    background: var(--green);
+    transition: background 0.4s;
+    z-index: 10;
+  }
+  .status-dot.idle { background: var(--yellow); }
+  .status-dot.dnd { background: var(--red); }
+  .status-dot.offline { background: #4e5058; }
+
+  .hero-name {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 6vw, 3.2rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, #fff 30%, var(--muted));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: fadeUp 0.7s 0.1s cubic-bezier(0.16,1,0.3,1) both;
+    line-height: 1.1;
+    margin-bottom: 6px;
+  }
+  .hero-tag {
+    font-size: 0.9rem;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    animation: fadeUp 0.7s 0.2s cubic-bezier(0.16,1,0.3,1) both;
+    margin-bottom: 16px;
+  }
+  .hero-status-text {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 100px;
+    padding: 6px 14px;
+    font-size: 0.82rem;
+    color: var(--muted);
+    animation: fadeUp 0.7s 0.3s cubic-bezier(0.16,1,0.3,1) both;
+    margin-bottom: 28px;
+    backdrop-filter: blur(8px);
+  }
+  .hero-status-text .dot-live {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 6px var(--green);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(0.85)} }
+
+  .hero-actions {
+    display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+    animation: fadeUp 0.7s 0.4s cubic-bezier(0.16,1,0.3,1) both;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 9px 18px;
+    border-radius: 10px;
+    font-size: 0.83rem;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    letter-spacing: 0.01em;
+  }
+  .btn-primary {
+    background: var(--primary);
+    color: #fff;
+  }
+  .btn-primary:hover { background: #4752c4; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(88,101,242,0.35); }
+  .btn-ghost {
+    background: var(--glass);
+    color: var(--text);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(8px);
+  }
+  .btn-ghost:hover { background: rgba(255,255,255,0.08); transform: translateY(-1px); }
+
+  /* ── Badge row ── */
+  .badges-row {
+    display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+    margin-top: 20px;
+    animation: fadeUp 0.7s 0.5s cubic-bezier(0.16,1,0.3,1) both;
+  }
+  .badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    padding: 4px 10px;
+    font-size: 0.75rem;
+    color: var(--muted);
+    backdrop-filter: blur(8px);
+    transition: all 0.2s;
+  }
+  .badge:hover { color: var(--text); border-color: rgba(255,255,255,0.15); transform: translateY(-1px); }
+  .badge svg { width: 13px; height: 13px; }
+
+  /* ── Grid ── */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    padding-bottom: 80px;
+  }
+  @media(max-width: 640px) { .grid { grid-template-columns: 1fr; } }
+
+  .col-full { grid-column: 1 / -1; }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 24px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    animation: fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) both;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+  }
+  .card:hover { border-color: rgba(255,255,255,0.13); transform: translateY(-2px); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+
+  .card-delay-1 { animation-delay: 0.1s; }
+  .card-delay-2 { animation-delay: 0.2s; }
+  .card-delay-3 { animation-delay: 0.3s; }
+  .card-delay-4 { animation-delay: 0.4s; }
+  .card-delay-5 { animation-delay: 0.5s; }
+
+  .card-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 7px;
+  }
+  .card-label svg { width: 13px; height: 13px; opacity: 0.7; }
+
+  /* ── Skeleton ── */
+  .skeleton {
+    background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 8px;
+  }
+  @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+  /* ── About me card ── */
+  .about-text { color: var(--muted); line-height: 1.75; font-size: 0.9rem; }
+
+  /* ── Activity card ── */
+  .activity-wrap { display: flex; gap: 14px; align-items: flex-start; }
+  .activity-img {
+    width: 64px; height: 64px; border-radius: 12px;
+    object-fit: cover; background: var(--surface2); flex-shrink: 0;
+  }
+  .activity-info { flex: 1; min-width: 0; }
+  .activity-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: 0.95rem;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    margin-bottom: 3px;
+  }
+  .activity-detail { font-size: 0.8rem; color: var(--muted); margin-bottom: 2px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .activity-progress-wrap { margin-top: 10px; }
+  .activity-progress-bar {
+    height: 3px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden;
+  }
+  .activity-progress-fill {
+    height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent));
+    border-radius: 10px; transition: width 1s linear;
+  }
+  .activity-time { display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--muted); margin-top: 4px; }
+
+  /* ── Spotify card ── */
+  .spotify-card { background: linear-gradient(135deg, rgba(29,185,84,0.07), rgba(29,185,84,0.02)); }
+  .spotify-inner { display: flex; gap: 16px; align-items: center; }
+  .spotify-art {
+    width: 76px; height: 76px; border-radius: 10px; flex-shrink: 0;
+    object-fit: cover; background: var(--surface2);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    animation: albumPulse 3s ease-in-out infinite;
+  }
+  @keyframes albumPulse { 0%,100%{box-shadow:0 8px 24px rgba(0,0,0,0.4)} 50%{box-shadow:0 8px 32px rgba(29,185,84,0.25)} }
+  .spotify-info { flex: 1; min-width: 0; }
+  .spotify-track {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: 1rem;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    margin-bottom: 2px;
+  }
+  .spotify-artist { font-size: 0.82rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
+  .spotify-album { font-size: 0.75rem; color: rgba(161,161,170,0.6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .spotify-icon { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
+  .spotify-icon svg { width: 18px; height: 18px; }
+  .spotify-progress { margin-top: 12px; }
+  .spotify-bar { height: 3px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+  .spotify-fill { height: 100%; background: var(--spotify); border-radius: 10px; transition: width 1s linear; }
+  .spotify-times { display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--muted); margin-top: 4px; }
+
+  /* Equalizer bars (animated when playing) */
+  .eq { display: flex; align-items: flex-end; gap: 2px; height: 14px; }
+  .eq-bar { width: 3px; border-radius: 2px; background: var(--spotify); }
+  .eq-bar:nth-child(1) { animation: eqBounce 0.8s ease-in-out infinite; }
+  .eq-bar:nth-child(2) { animation: eqBounce 0.8s ease-in-out infinite 0.15s; }
+  .eq-bar:nth-child(3) { animation: eqBounce 0.8s ease-in-out infinite 0.3s; }
+  .eq-bar:nth-child(4) { animation: eqBounce 0.8s ease-in-out infinite 0.05s; }
+  @keyframes eqBounce { 0%,100%{height:4px} 50%{height:13px} }
+
+  /* ── Stats card ── */
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .stat-item { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 14px; border: 1px solid rgba(255,255,255,0.05); }
+  .stat-value { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 800; margin-bottom: 2px; }
+  .stat-label { font-size: 0.74rem; color: var(--muted); letter-spacing: 0.02em; }
+  .stat-value.primary { color: var(--primary); }
+  .stat-value.accent { color: var(--accent); }
+  .stat-value.green { color: var(--green); }
+  .stat-value.spotify { color: var(--spotify); }
+
+  /* ── Clock card ── */
+  .clock-display {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.8rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    background: linear-gradient(135deg, var(--text), var(--muted));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .clock-date { font-size: 0.8rem; color: var(--muted); }
+  .clock-tz { font-size: 0.72rem; color: rgba(161,161,170,0.5); margin-top: 2px; }
+
+  /* ── ID card ── */
+  .id-display {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    color: var(--muted);
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 12px 14px;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .id-display:hover { border-color: rgba(255,255,255,0.15); color: var(--text); }
+  .id-copy { font-size: 0.72rem; color: var(--muted); display: flex; align-items: center; gap: 4px; }
+  .snowflake-info { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .sf-item { background: rgba(255,255,255,0.02); border-radius: 8px; padding: 10px; }
+  .sf-key { font-size: 0.7rem; color: var(--muted); margin-bottom: 2px; letter-spacing: 0.03em; }
+  .sf-val { font-size: 0.82rem; font-weight: 500; }
+
+  /* ── Connected accounts ── */
+  .accounts-list { display: flex; flex-direction: column; gap: 8px; }
+  .account-item {
+    display: flex; align-items: center; gap: 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 12px;
+    padding: 12px 14px;
+    transition: all 0.2s;
+  }
+  .account-item:hover { border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); }
+  .account-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .account-name { font-weight: 500; font-size: 0.88rem; }
+  .account-type { font-size: 0.75rem; color: var(--muted); text-transform: capitalize; }
+
+  /* ── No data placeholders ── */
+  .no-data { color: var(--muted); font-size: 0.85rem; text-align: center; padding: 20px 0; opacity: 0.6; }
+
+  /* ── Presence history mini graph ── */
+  .presence-graph { display: flex; align-items: flex-end; gap: 4px; height: 48px; margin-top: 8px; }
+  .pg-bar { flex: 1; border-radius: 4px 4px 0 0; min-height: 6px; transition: height 0.5s; }
+
+  /* ── Toast ── */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--surface2);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 10px 18px;
+    font-size: 0.83rem;
+    color: var(--text);
+    display: flex; align-items: center; gap: 8px;
+    z-index: 1000;
+    transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), opacity 0.35s;
+    opacity: 0;
+    pointer-events: none;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+  .toast-check { color: var(--green); }
+
+  /* ── Animations ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Banner ── */
+  .banner-wrap {
+    width: 100%; height: 160px; overflow: hidden;
+    position: relative; border-radius: 20px 20px 0 0;
+    background: linear-gradient(135deg, #1a1b2e, #16213e, #0f3460);
+    margin-bottom: -60px;
+    animation: fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) both;
+  }
+  .banner-img { width: 100%; height: 100%; object-fit: cover; }
+  .banner-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 40%, rgba(9,9,11,0.7)); }
+
+  /* Banner gradient fallback */
+  .banner-gradient {
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg,
+      rgba(88,101,242,0.5) 0%,
+      rgba(139,92,246,0.4) 40%,
+      rgba(59,130,246,0.3) 100%);
+  }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+
+  /* ── Status badge text ── */
+  .status-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; border-radius: 100px; font-size: 0.75rem; font-weight: 500;
+  }
+  .status-badge.online { background: rgba(35,165,90,0.15); color: var(--green); border: 1px solid rgba(35,165,90,0.25); }
+  .status-badge.idle { background: rgba(240,178,50,0.15); color: var(--yellow); border: 1px solid rgba(240,178,50,0.25); }
+  .status-badge.dnd { background: rgba(242,63,66,0.15); color: var(--red); border: 1px solid rgba(242,63,66,0.25); }
+  .status-badge.offline { background: rgba(78,80,88,0.15); color: #7d8089; border: 1px solid rgba(78,80,88,0.25); }
+
+  /* ── Platform icons ── */
+  .platform-row { display: flex; gap: 8px; margin-top: 12px; }
+  .platform-chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 10px; border-radius: 8px;
+    font-size: 0.72rem; color: var(--muted);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .platform-chip svg { width: 11px; height: 11px; }
+
+</style>
 </head>
-<body class="min-h-screen antialiased">
-  <div class="max-w-4xl mx-auto px-4 pb-16">
-    <!-- Header -->
-    <header class="flex justify-between items-center py-6">
-      <div class="text-2xl font-bold gradient-text">Profile</div>
-      <nav class="text-sm text-muted">Premium</nav>
-    </header>
+<body>
 
-    <!-- Main dynamic content area -->
-    <main id="app" class="flex flex-col gap-6">
-      <!-- Hero skeleton -->
-      <section class="flex flex-col items-center pt-16 pb-12 relative overflow-hidden">
-        <div class="absolute inset-0 -z-10 animate-gradient bg-gradient-to-r from-primary/20 via-accent/10 to-background opacity-30"></div>
-        <div class="w-32 h-32 rounded-full skeleton" id="avatar-skeleton"></div>
-        <div class="mt-6 text-center">
-          <div class="h-8 w-48 skeleton mx-auto" id="name-skeleton"></div>
-          <div class="h-4 w-32 skeleton mx-auto mt-2" id="username-skeleton"></div>
-          <div class="h-4 w-24 skeleton mx-auto mt-3" id="status-skeleton"></div>
-        </div>
-      </section>
+<div class="bg-orbs">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+<div class="noise"></div>
 
-      <!-- Cards skeleton -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="glass-card p-6 h-40 skeleton"></div>
-        <div class="glass-card p-6 h-40 skeleton"></div>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="glass-card p-6 h-40 skeleton"></div>
-        <div class="glass-card p-6 h-24 skeleton"></div>
-      </div>
-      <div class="glass-card p-6 h-32 skeleton"></div>
-    </main>
+<div class="page">
+  <!-- Banner -->
+  <div class="container">
+    <div class="banner-wrap" id="bannerWrap">
+      <div class="banner-gradient" id="bannerInner"></div>
+      <div class="banner-overlay"></div>
+    </div>
   </div>
 
-  <script>
-    // ---- Lanyard integration ----
-    const USER_ID = '1429093326505640016';
+  <!-- Hero -->
+  <div class="hero">
+    <div class="avatar-wrap">
+      <div class="avatar-ring"><div class="avatar-ring-inner"></div></div>
+      <img id="avatarImg" class="avatar-img" src="" alt="Avatar"/>
+      <div class="status-dot offline" id="statusDot"></div>
+    </div>
 
-    // Decode snowflake
-    function decodeSnowflake(snowflake) {
-      const DISCORD_EPOCH = 1420070400000n;
-      const id = BigInt(snowflake);
-      const timestamp = Number(id >> 22n) + Number(DISCORD_EPOCH);
-      return new Date(timestamp);
-    }
+    <h1 class="hero-name" id="heroName">
+      <span class="skeleton" style="display:inline-block;width:180px;height:1em;border-radius:8px;"></span>
+    </h1>
+    <div class="hero-tag" id="heroTag">Fetching profile…</div>
 
-    // Helper: format time mm:ss
-    function formatTime(seconds) {
-      const mins = Math.floor(seconds / 60);
-      const secs = seconds % 60;
-      return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-    }
+    <div class="hero-status-text" id="heroStatusWrap">
+      <span class="dot-live"></span>
+      <span id="heroStatusText">Loading…</span>
+    </div>
 
-    // State
-    let data = null;
+    <div class="hero-actions">
+      <button class="btn btn-primary" onclick="copyID()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+        Copy Discord ID
+      </button>
+      <button class="btn btn-ghost" onclick="shareProfile()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        Share Profile
+      </button>
+    </div>
 
-    // Render functions
-    function renderHero() {
-      const section = document.querySelector('main section');
-      if (!data) return;
+    <div class="badges-row" id="badgesRow"></div>
+  </div>
 
-      const user = data.discord_user;
-      const avatarUrl = user.avatar
-        ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=256`
-        : 'https://cdn.discordapp.com/embed/avatars/0.png';
+  <!-- Cards Grid -->
+  <div class="container">
+    <div class="grid">
 
-      const statusMap = { online: 'Online', idle: 'Idle', dnd: 'Do Not Disturb', offline: 'Offline' };
-      const dotClass = `dot-${data.discord_status}`;
-
-      section.innerHTML = `
-        <div class="absolute inset-0 -z-10 animate-gradient bg-gradient-to-r from-primary/20 via-accent/10 to-background opacity-30"></div>
-        <div class="relative">
-          <img src="${avatarUrl}" alt="${user.global_name || user.username}" class="w-32 h-32 rounded-full ring-4 ring-primary/20 shadow-2xl shadow-primary/10 transition-transform duration-300 hover:scale-105" />
-          <div class="absolute -bottom-1 -right-1 w-7 h-7 rounded-full border-4 border-background ${dotClass}"></div>
+      <!-- About Me -->
+      <div class="card card-delay-1" id="aboutCard">
+        <div class="card-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          About Me
         </div>
-        <div class="mt-6 text-center">
-          <h1 class="text-3xl font-bold gradient-text">${user.global_name || user.username}</h1>
-          <p class="text-muted text-sm mt-1">@${user.username}${user.discriminator && user.discriminator !== '0' ? '#' + user.discriminator : ''}</p>
-          <div class="flex items-center justify-center gap-2 mt-2 text-sm text-muted">
-            <span class="w-2 h-2 rounded-full inline-block ${dotClass}"></span>
-            ${statusMap[data.discord_status]}
-          </div>
-          ${data.custom_status ? `
-            <div class="mt-3 text-sm text-muted/80 italic">
-              ${data.custom_status.emoji ? 
-                (data.custom_status.emoji.id ? 
-                  `<img src="https://cdn.discordapp.com/emojis/${data.custom_status.emoji.id}.png" class="w-4 h-4 inline" />` :
-                  `<span>${data.custom_status.emoji.name}</span>`) : ''}
-              ${data.custom_status.state || ''}
-            </div>` : ''}
+        <p class="about-text" id="aboutText">
+          <span class="skeleton" style="display:block;height:1em;margin-bottom:8px;"></span>
+          <span class="skeleton" style="display:block;height:1em;width:80%;"></span>
+        </p>
+      </div>
+
+      <!-- Real-time Clock -->
+      <div class="card card-delay-2" id="clockCard">
+        <div class="card-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Live Clock
         </div>
-      `;
+        <div class="clock-display" id="clockDisplay">--:--:--</div>
+        <div class="clock-date" id="clockDate">—</div>
+        <div class="clock-tz" id="clockTZ">—</div>
+      </div>
 
-      // Animations (motion)
-      motion.animate('.glass-card', { opacity: 1, y: 0 }, { duration: 0.5 });
-    }
-
-    function renderAboutCard() {
-      const container = document.getElementById('cards-container');
-      if (!data || !container) return;
-
-      const user = data.discord_user;
-      const creationDate = decodeSnowflake(user.id);
-      const formattedDate = creationDate.toLocaleDateString('en-US', { dateStyle: 'full' });
-
-      const card = document.createElement('div');
-      card.className = 'glass-card glass-hover p-6 flex flex-col gap-4';
-      card.innerHTML = `
-        <div class="flex items-center gap-2 text-primary">
-          <i data-lucide="info" class="w-5 h-5"></i>
-          <h2 class="font-semibold text-lg">About Me</h2>
+      <!-- Current Activity -->
+      <div class="card card-delay-3 col-full" id="activityCard" style="display:none;">
+        <div class="card-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M10 8l6 4-6 4V8z"/></svg>
+          Currently Playing
         </div>
-        <div class="space-y-3 text-sm text-muted">
-          <div class="flex items-center gap-3">
-            <i data-lucide="hash" class="w-4 h-4"></i>
-            <span>ID: ${user.id}</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <i data-lucide="calendar-days" class="w-4 h-4"></i>
-            <span>Created: ${formattedDate}</span>
+        <div class="activity-wrap" id="activityWrap"></div>
+      </div>
+
+      <!-- Spotify -->
+      <div class="card card-delay-3 col-full spotify-card" id="spotifyCard" style="display:none;">
+        <div class="spotify-icon">
+          <svg viewBox="0 0 24 24" fill="var(--spotify)"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424a.627.627 0 01-.862.205c-2.363-1.44-5.335-1.766-8.838-.967a.627.627 0 01-.744-.47.624.624 0 01.469-.742c3.831-.874 7.115-.497 9.765 1.111.296.18.39.567.21.863zm1.223-2.72a.78.78 0 01-1.074.257c-2.705-1.66-6.826-2.143-10.026-1.172a.78.78 0 01-.473-1.488c3.656-1.124 8.201-.578 11.317 1.33a.784.784 0 01.256 1.074zm.105-2.83c-3.245-1.927-8.597-2.104-11.691-1.164a.937.937 0 01-.567-1.791c3.558-1.091 9.477-.881 13.216 1.35a.937.937 0 01-.958 1.605z"/></svg>
+          <span style="font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--spotify)">Listening on Spotify</span>
+          <div class="eq" id="spotifyEq">
+            <div class="eq-bar" style="height:4px;"></div>
+            <div class="eq-bar" style="height:8px;"></div>
+            <div class="eq-bar" style="height:4px;"></div>
+            <div class="eq-bar" style="height:10px;"></div>
           </div>
         </div>
-      `;
-      container.appendChild(card);
-    }
-
-    function renderStatsCard() {
-      const container = document.getElementById('cards-container');
-      if (!data || !container) return;
-
-      const platforms = [];
-      if (data.active_on_discord.desktop) platforms.push('Desktop');
-      if (data.active_on_discord.mobile) platforms.push('Mobile');
-      if (data.active_on_discord.web) platforms.push('Web');
-
-      const card = document.createElement('div');
-      card.className = 'glass-card glass-hover p-6 flex flex-col gap-4';
-      card.innerHTML = `
-        <div class="flex items-center gap-2 text-primary">
-          <i data-lucide="activity" class="w-5 h-5"></i>
-          <h2 class="font-semibold text-lg">Statistics</h2>
-        </div>
-        <div class="space-y-3 text-sm text-muted">
-          <div class="flex items-center justify-between">
-            <span>Active on</span>
-            <div class="flex items-center gap-2">
-              ${platforms.length > 0 ? platforms.map(p => 
-                `<span class="flex items-center gap-1 bg-white/5 px-2 py-0.5 rounded-full">
-                  ${p === 'Desktop' ? '<i data-lucide="monitor" class="w-3 h-3"></i>' : 
-                    p === 'Mobile' ? '<i data-lucide="smartphone" class="w-3 h-3"></i>' :
-                    '<i data-lucide="globe" class="w-3 h-3"></i>'} ${p}
-                </span>`
-              ).join('') : '<span class="text-muted/50">None</span>'}
+        <div class="spotify-inner">
+          <img id="spotifyArt" class="spotify-art" src="" alt="Album Art"/>
+          <div class="spotify-info">
+            <div class="spotify-track" id="spotifyTrack">—</div>
+            <div class="spotify-artist" id="spotifyArtist">—</div>
+            <div class="spotify-album" id="spotifyAlbum">—</div>
+            <div class="spotify-progress">
+              <div class="spotify-bar"><div class="spotify-fill" id="spotifyFill" style="width:0%"></div></div>
+              <div class="spotify-times">
+                <span id="spotifyElapsed">0:00</span>
+                <span id="spotifyTotal">0:00</span>
+              </div>
             </div>
           </div>
         </div>
-      `;
-      container.appendChild(card);
-    }
+      </div>
 
-    function renderActivityCard() {
-      const container = document.getElementById('activity-spotify-container');
-      if (!data || !container) return;
-
-      const activities = data.activities.filter(a => a.type !== 2 || !data.spotify);
-      const card = document.createElement('div');
-      card.className = 'glass-card glass-hover p-6 flex flex-col gap-4';
-      card.innerHTML = `
-        <div class="flex items-center gap-2 text-primary">
-          <i data-lucide="activity" class="w-5 h-5"></i>
-          <h2 class="font-semibold text-lg">Current Activity</h2>
+      <!-- Discord Stats -->
+      <div class="card card-delay-4">
+        <div class="card-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Discord Stats
         </div>
-        ${activities.length > 0 ? `<ul class="space-y-3">${activities.map(a => `
-          <li class="flex items-center gap-3 text-sm">
-            <span class="text-primary">${a.type === 0 ? '<i data-lucide="gamepad-2" class="w-4 h-4"></i>' : '<i data-lucide="monitor" class="w-4 h-4"></i>'}</span>
-            <div>
-              <p class="font-medium text-text">${a.name}</p>
-              ${a.details ? `<p class="text-muted/80">${a.details}</p>` : ''}
-              ${a.state ? `<p class="text-muted/60">${a.state}</p>` : ''}
-            </div>
-          </li>`).join('')}</ul>` : '<p class="text-sm text-muted/50">No active activities</p>'}
-      `;
-      container.appendChild(card);
-    }
-
-    function renderSpotifyCard() {
-      const container = document.getElementById('activity-spotify-container');
-      if (!data || !container || !data.spotify) return;
-
-      const spotify = data.spotify;
-      const card = document.createElement('div');
-      card.className = 'glass-card glass-hover p-4 flex gap-4 items-center';
-      card.id = 'spotify-card';
-      card.innerHTML = `
-        <div class="relative flex-shrink-0">
-          <img src="${spotify.album_art_url}" alt="${spotify.album}" class="w-16 h-16 rounded-lg object-cover shadow-lg" />
-          <div class="absolute -bottom-1 -right-1 bg-primary rounded-full p-1">
-            <i data-lucide="music" class="w-3 h-3 text-white"></i>
+        <div class="stats-grid" id="statsGrid">
+          <div class="stat-item">
+            <div class="stat-value primary" id="statStatus">—</div>
+            <div class="stat-label">Status</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value accent" id="statActivities">0</div>
+            <div class="stat-label">Activities</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value green" id="statMember">—</div>
+            <div class="stat-label">Member Since</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value spotify" id="statSpotify">—</div>
+            <div class="stat-label">Spotify</div>
           </div>
         </div>
-        <div class="flex-1 min-w-0">
-          <h4 class="font-semibold text-sm truncate">${spotify.song}</h4>
-          <p class="text-xs text-muted truncate">${spotify.artist}</p>
-          <div class="mt-2 h-1 bg-white/10 rounded-full overflow-hidden">
-            <div id="spotify-progress" class="h-full bg-gradient-to-r from-primary to-accent" style="width: 0%"></div>
-          </div>
-          <div class="flex justify-between text-xs text-muted mt-1">
-            <span id="spotify-current">0:00</span>
-            <span>${formatTime(Math.floor((spotify.timestamps.end - spotify.timestamps.start) / 1000))}</span>
-          </div>
+        <div class="platform-row" id="platformRow"></div>
+      </div>
+
+      <!-- Discord ID / Snowflake decoder -->
+      <div class="card card-delay-4">
+        <div class="card-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          Snowflake ID
         </div>
-        <a href="https://open.spotify.com/track/${spotify.track_id}" target="_blank" class="text-muted hover:text-primary transition-colors">
-          <i data-lucide="external-link" class="w-4 h-4"></i>
-        </a>
-      `;
-      container.appendChild(card);
-      // Start progress update
-      updateSpotifyProgress();
-    }
-
-    function updateSpotifyProgress() {
-      if (!data || !data.spotify) return;
-      const spotify = data.spotify;
-      const progressBar = document.getElementById('spotify-progress');
-      const currentTimeLabel = document.getElementById('spotify-current');
-      if (!progressBar) return;
-      const update = () => {
-        const now = Date.now();
-        const duration = spotify.timestamps.end - spotify.timestamps.start;
-        const elapsed = now - spotify.timestamps.start;
-        const percent = Math.min(1, Math.max(0, elapsed / duration)) * 100;
-        progressBar.style.width = percent + '%';
-        if (currentTimeLabel) {
-          currentTimeLabel.textContent = formatTime(Math.floor(elapsed / 1000));
-        }
-      };
-      update();
-      setInterval(update, 1000);
-    }
-
-    function renderBadges() {
-      const badgesContainer = document.getElementById('badges-container');
-      if (!data || !badgesContainer) return;
-
-      const FLAG_MAP = {
-        1: 'Staff', 2: 'Partner', 4: 'HypeSquad Events', 8: 'Bug Hunter Level 1',
-        64: 'HypeSquad House 1', 128: 'HypeSquad House 2', 256: 'HypeSquad House 3',
-        16384: 'Bug Hunter Level 2', 131072: 'Early Verified Developer',
-        262144: 'Discord Certified Moderator'
-      };
-
-      const flags = data.discord_user.public_flags;
-      const badges = Object.entries(FLAG_MAP).filter(([flag]) => flags & parseInt(flag)).map(([, name]) => name);
-      if (badges.length === 0) return;
-
-      badgesContainer.innerHTML = badges.map(badge => 
-        `<span class="glass-card px-2 py-0.5 text-xs font-medium text-muted">${badge}</span>`
-      ).join('');
-      badgesContainer.className = 'flex flex-wrap gap-2 mt-4';
-    }
-
-    function renderSnowflakeDecoder() {
-      const container = document.getElementById('decoder-container');
-      if (!container) return;
-      container.innerHTML = `
-        <div class="glass-card glass-hover p-6 flex flex-col gap-4">
-          <div class="flex items-center gap-2 text-primary">
-            <i data-lucide="hash" class="w-5 h-5"></i>
-            <h2 class="font-semibold text-lg">Snowflake Decoder</h2>
-          </div>
-          <div class="flex flex-col sm:flex-row gap-3">
-            <input id="snowflake-input" type="text" placeholder="Enter Discord ID" class="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-text placeholder-muted/50 focus:outline-none focus:ring-1 focus:ring-primary flex-1" />
-            <button id="decode-btn" class="px-4 py-2 text-sm font-medium bg-primary/20 hover:bg-primary/30 rounded-lg transition-colors">Decode</button>
-          </div>
-          <div id="decode-result" class="hidden text-sm text-muted flex items-center gap-4">
-            <i data-lucide="calendar-days" class="w-4 h-4"></i><span id="decoded-date"></span>
-            <i data-lucide="clock" class="w-4 h-4 ml-4"></i><span id="decoded-time"></span>
-          </div>
+        <div class="id-display" id="idDisplay" onclick="copyID()">
+          <span>1429093326505640016</span>
+          <span class="id-copy">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            Copy
+          </span>
         </div>
-      `;
-      document.getElementById('decode-btn').addEventListener('click', () => {
-        const input = document.getElementById('snowflake-input').value.trim();
-        const resultDiv = document.getElementById('decode-result');
-        try {
-          const date = decodeSnowflake(input);
-          document.getElementById('decoded-date').textContent = date.toLocaleDateString('en-US', { dateStyle: 'full' });
-          document.getElementById('decoded-time').textContent = date.toLocaleTimeString();
-          resultDiv.classList.remove('hidden');
-        } catch {
-          resultDiv.classList.add('hidden');
-        }
-      });
-      lucide.createIcons();
-    }
+        <div class="snowflake-info" id="snowflakeInfo"></div>
+      </div>
 
-    function renderClock() {
-      const container = document.getElementById('clock-container');
-      if (!container) return;
-      container.innerHTML = `
-        <div class="glass-card glass-hover p-4 flex items-center gap-3">
-          <i data-lucide="clock" class="w-5 h-5 text-primary"></i>
-          <span id="clock-display" class="font-mono text-sm text-text"></span>
+      <!-- Connected Accounts -->
+      <div class="card card-delay-5 col-full" id="accountsCard" style="display:none;">
+        <div class="card-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+          Connected Accounts
         </div>
-      `;
-      function updateClock() {
-        const now = new Date();
-        document.getElementById('clock-display').textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        <div class="accounts-list" id="accountsList"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <span class="toast-check">✓</span>
+  <span id="toastMsg">Copied to clipboard!</span>
+</div>
+
+<script>
+const USER_ID = '1429093326505640016';
+const API = `https://api.lanyard.rest/v1/users/${USER_ID}`;
+const WS_URL = 'wss://api.lanyard.rest/socket';
+
+let presenceData = null;
+let spotifyInterval = null;
+let ws = null;
+
+// ─── Snowflake decoder ───────────────────────────────────────────
+function decodeSnowflake(id) {
+  const bigId = BigInt(id);
+  const EPOCH = BigInt(1420070400000);
+  const timestamp = (bigId >> BigInt(22)) + EPOCH;
+  const workerId = (bigId & BigInt(0x3E0000)) >> BigInt(17);
+  const processId = (bigId & BigInt(0x1F000)) >> BigInt(12);
+  const increment = bigId & BigInt(0xFFF);
+  const date = new Date(Number(timestamp));
+  return { timestamp: date, workerId, processId, increment };
+}
+
+function renderSnowflake() {
+  const sf = decodeSnowflake(USER_ID);
+  const container = document.getElementById('snowflakeInfo');
+  const created = sf.timestamp.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  const time = sf.timestamp.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  container.innerHTML = `
+    <div class="sf-item"><div class="sf-key">Created</div><div class="sf-val">${created}</div></div>
+    <div class="sf-item"><div class="sf-key">Time (UTC)</div><div class="sf-val">${time}</div></div>
+    <div class="sf-item"><div class="sf-key">Worker ID</div><div class="sf-val">${sf.workerId}</div></div>
+    <div class="sf-item"><div class="sf-key">Increment</div><div class="sf-val">${sf.increment}</div></div>
+  `;
+  document.getElementById('statMember').textContent = sf.timestamp.getFullYear();
+}
+renderSnowflake();
+
+// ─── Clock ───────────────────────────────────────────────────────
+function updateClock() {
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2,'0');
+  const m = String(now.getMinutes()).padStart(2,'0');
+  const s = String(now.getSeconds()).padStart(2,'0');
+  document.getElementById('clockDisplay').textContent = `${h}:${m}:${s}`;
+  document.getElementById('clockDate').textContent = now.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  document.getElementById('clockTZ').textContent = `Timezone: ${tz}`;
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+// ─── Avatar URL ──────────────────────────────────────────────────
+function avatarUrl(data) {
+  if (data.discord_user.avatar) {
+    const ext = data.discord_user.avatar.startsWith('a_') ? 'gif' : 'png';
+    return `https://cdn.discordapp.com/avatars/${USER_ID}/${data.discord_user.avatar}.${ext}?size=256`;
+  }
+  const disc = parseInt(data.discord_user.discriminator) % 5;
+  return `https://cdn.discordapp.com/embed/avatars/${disc}.png`;
+}
+
+// ─── Status helpers ──────────────────────────────────────────────
+const STATUS_LABELS = { online: 'Online', idle: 'Idle', dnd: 'Do Not Disturb', offline: 'Offline' };
+const STATUS_COLORS = { online: '#23A55A', idle: '#F0B232', dnd: '#F23F42', offline: '#4e5058' };
+
+function applyStatus(status) {
+  const dot = document.getElementById('statusDot');
+  dot.className = `status-dot ${status}`;
+  const heroWrap = document.getElementById('heroStatusWrap');
+  const dotEl = heroWrap.querySelector('.dot-live');
+  dotEl.style.background = STATUS_COLORS[status] || '#4e5058';
+  dotEl.style.boxShadow = `0 0 6px ${STATUS_COLORS[status] || '#4e5058'}`;
+  document.getElementById('heroStatusText').textContent = STATUS_LABELS[status] || 'Offline';
+  document.getElementById('statStatus').textContent = STATUS_LABELS[status] || '—';
+  document.getElementById('statStatus').className = `stat-value ${status === 'online' ? 'green' : status === 'idle' ? '' : status === 'dnd' ? '' : 'primary'}`;
+}
+
+// ─── Time format ─────────────────────────────────────────────────
+function fmtMs(ms) {
+  const s = Math.floor(ms / 1000);
+  const m = Math.floor(s / 60);
+  const sec = s % 60;
+  return `${m}:${String(sec).padStart(2,'0')}`;
+}
+
+// ─── Render Spotify ──────────────────────────────────────────────
+function renderSpotify(spotify) {
+  if (!spotify) { document.getElementById('spotifyCard').style.display = 'none'; document.getElementById('statSpotify').textContent = 'Offline'; return; }
+  document.getElementById('spotifyCard').style.display = 'block';
+  document.getElementById('spotifyArt').src = spotify.album_art_url || '';
+  document.getElementById('spotifyTrack').textContent = spotify.song || '—';
+  document.getElementById('spotifyArtist').textContent = spotify.artist || '—';
+  document.getElementById('spotifyAlbum').textContent = spotify.album || '—';
+  document.getElementById('statSpotify').textContent = '♪ Playing';
+
+  const total = spotify.timestamps.end - spotify.timestamps.start;
+  document.getElementById('spotifyTotal').textContent = fmtMs(total);
+
+  if (spotifyInterval) clearInterval(spotifyInterval);
+  spotifyInterval = setInterval(() => {
+    const elapsed = Date.now() - spotify.timestamps.start;
+    const pct = Math.min(100, (elapsed / total) * 100);
+    document.getElementById('spotifyFill').style.width = pct + '%';
+    document.getElementById('spotifyElapsed').textContent = fmtMs(elapsed);
+    if (elapsed >= total) clearInterval(spotifyInterval);
+  }, 1000);
+}
+
+// ─── Render Activity ─────────────────────────────────────────────
+function renderActivities(activities) {
+  const non_spotify = activities.filter(a => a.type !== 2);
+  document.getElementById('statActivities').textContent = non_spotify.length;
+  const card = document.getElementById('activityCard');
+  const wrap = document.getElementById('activityWrap');
+  if (!non_spotify.length) { card.style.display = 'none'; return; }
+  card.style.display = 'block';
+  const a = non_spotify[0];
+
+  let imgSrc = '';
+  if (a.assets && a.assets.large_image) {
+    if (a.assets.large_image.startsWith('mp:external')) {
+      imgSrc = `https://media.discordapp.net/${a.assets.large_image.replace('mp:', '')}`;
+    } else {
+      imgSrc = `https://cdn.discordapp.com/app-assets/${a.application_id}/${a.assets.large_image}.png`;
+    }
+  }
+
+  let timeStr = '';
+  let progressHtml = '';
+  if (a.timestamps) {
+    if (a.timestamps.start && a.timestamps.end) {
+      const total = a.timestamps.end - a.timestamps.start;
+      const elapsed = Date.now() - a.timestamps.start;
+      const pct = Math.min(100, (elapsed / total) * 100);
+      timeStr = `${fmtMs(elapsed)} / ${fmtMs(total)}`;
+      progressHtml = `<div class="activity-progress-wrap">
+        <div class="activity-progress-bar"><div class="activity-progress-fill" style="width:${pct}%"></div></div>
+        <div class="activity-time"><span>${fmtMs(elapsed)}</span><span>${fmtMs(total)}</span></div>
+      </div>`;
+    } else if (a.timestamps.start) {
+      const elapsed = Date.now() - a.timestamps.start;
+      timeStr = fmtMs(elapsed) + ' elapsed';
+    }
+  }
+
+  wrap.innerHTML = `
+    ${imgSrc ? `<img src="${imgSrc}" class="activity-img" alt=""/>` : `<div class="activity-img" style="display:flex;align-items:center;justify-content:center;font-size:1.8rem;">${a.emoji?.name || '🎮'}</div>`}
+    <div class="activity-info">
+      <div class="activity-name">${escHtml(a.name)}</div>
+      ${a.details ? `<div class="activity-detail">${escHtml(a.details)}</div>` : ''}
+      ${a.state ? `<div class="activity-detail" style="opacity:0.7">${escHtml(a.state)}</div>` : ''}
+      ${progressHtml}
+      ${!progressHtml && timeStr ? `<div class="activity-detail" style="margin-top:6px;opacity:0.6">${timeStr}</div>` : ''}
+    </div>`;
+}
+
+// ─── Render badges ───────────────────────────────────────────────
+function renderBadges(data) {
+  const container = document.getElementById('badgesRow');
+  const badges = [];
+
+  if (data.discord_user.public_flags) {
+    const flags = data.discord_user.public_flags;
+    if (flags & 1) badges.push({ icon: '👑', label: 'Discord Staff' });
+    if (flags & 64) badges.push({ icon: '🏠', label: 'HypeSquad House' });
+    if (flags & 128) badges.push({ icon: '🐛', label: 'Bug Hunter' });
+    if (flags & 512) badges.push({ icon: '🏅', label: 'Early Supporter' });
+    if (flags & 4096) badges.push({ icon: '✨', label: 'Active Developer' });
+    if (flags & 131072) badges.push({ icon: '🐛', label: 'Bug Hunter Gold' });
+    if (flags & 262144) badges.push({ icon: '🌟', label: 'Early Verified Dev' });
+  }
+
+  if (data.discord_user.premium_type) badges.push({ icon: '💎', label: 'Nitro' });
+
+  if (!badges.length) {
+    container.innerHTML = '';
+    return;
+  }
+
+  container.innerHTML = badges.map(b => `
+    <div class="badge">${b.icon} ${b.label}</div>
+  `).join('');
+}
+
+// ─── Render connected accounts ────────────────────────────────────
+const PLATFORM_COLORS = {
+  github: '#24292e', twitter: '#1DA1F2', twitch: '#9146FF', youtube: '#FF0000',
+  reddit: '#FF4500', spotify: '#1DB954', steam: '#171A21', xbox: '#107C10'
+};
+const PLATFORM_ICONS = {
+  github: `<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0012 2z"/></svg>`,
+  twitch: `<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"/></svg>`,
+  twitter: `<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>`,
+  youtube: `<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>`,
+  reddit: `<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>`,
+  steam: `<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.711L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.605 0 11.979 0zM7.54 18.21l-1.473-.61c.262.543.714.999 1.314 1.25 1.297.539 2.793-.076 3.332-1.375.263-.63.264-1.319.005-1.949s-.75-1.121-1.377-1.383c-.624-.26-1.29-.249-1.878-.03l1.523.63c.956.4 1.409 1.5 1.009 2.455-.4.957-1.497 1.41-2.454 1.012H7.54zm11.415-9.303c0-1.662-1.353-3.015-3.015-3.015-1.665 0-3.015 1.353-3.015 3.015 0 1.665 1.35 3.015 3.015 3.015 1.663 0 3.015-1.35 3.015-3.015zm-5.273-.005c0-1.252 1.013-2.266 2.265-2.266 1.249 0 2.266 1.014 2.266 2.266 0 1.251-1.017 2.265-2.266 2.265-1.253 0-2.265-1.014-2.265-2.265z"/></svg>`,
+  spotify: `<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424a.627.627 0 01-.862.205c-2.363-1.44-5.335-1.766-8.838-.967a.627.627 0 01-.744-.47.624.624 0 01.469-.742c3.831-.874 7.115-.497 9.765 1.111.296.18.39.567.21.863zm1.223-2.72a.78.78 0 01-1.074.257c-2.705-1.66-6.826-2.143-10.026-1.172a.78.78 0 01-.473-1.488c3.656-1.124 8.201-.578 11.317 1.33a.784.784 0 01.256 1.074zm.105-2.83c-3.245-1.927-8.597-2.104-11.691-1.164a.937.937 0 01-.567-1.791c3.558-1.091 9.477-.881 13.216 1.35a.937.937 0 01-.958 1.605z"/></svg>`,
+};
+
+function renderConnectedAccounts(accounts) {
+  if (!accounts || !accounts.length) {
+    document.getElementById('accountsCard').style.display = 'none';
+    return;
+  }
+  document.getElementById('accountsCard').style.display = 'block';
+  const list = document.getElementById('accountsList');
+  list.innerHTML = accounts.map(acc => {
+    const type = acc.type.toLowerCase();
+    const color = PLATFORM_COLORS[type] || '#5865F2';
+    const icon = PLATFORM_ICONS[type] || '🔗';
+    return `<div class="account-item">
+      <div class="account-icon" style="background:${color}22;color:${color};">${icon}</div>
+      <div>
+        <div class="account-name">${escHtml(acc.name)}</div>
+        <div class="account-type">${escHtml(acc.type)}</div>
+      </div>
+      ${acc.verified ? `<div style="margin-left:auto;font-size:0.7rem;color:var(--green);">✓ Verified</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// ─── Render platform indicators ───────────────────────────────────
+function renderPlatforms(clientStatus) {
+  if (!clientStatus) return;
+  const row = document.getElementById('platformRow');
+  const platforms = [];
+  if (clientStatus.desktop) platforms.push({ name: 'Desktop', icon: `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>`, status: clientStatus.desktop });
+  if (clientStatus.mobile) platforms.push({ name: 'Mobile', icon: `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>`, status: clientStatus.mobile });
+  if (clientStatus.web) platforms.push({ name: 'Web', icon: `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>`, status: clientStatus.web });
+  row.innerHTML = platforms.map(p =>
+    `<div class="platform-chip" style="color:${STATUS_COLORS[p.status] || 'var(--muted)'}">${p.icon} ${p.name}</div>`
+  ).join('');
+}
+
+// ─── Main render ─────────────────────────────────────────────────
+function renderData(d) {
+  presenceData = d;
+
+  // Avatar
+  const img = document.getElementById('avatarImg');
+  img.src = avatarUrl(d);
+  img.onerror = () => { img.src = 'https://cdn.discordapp.com/embed/avatars/0.png'; };
+
+  // Name
+  const nameEl = document.getElementById('heroName');
+  const displayName = d.discord_user.global_name || d.discord_user.username;
+  nameEl.innerHTML = escHtml(displayName);
+
+  // Tag
+  const disc = d.discord_user.discriminator;
+  const tag = disc === '0' || !disc ? `@${d.discord_user.username}` : `${d.discord_user.username}#${disc}`;
+  document.getElementById('heroTag').textContent = tag;
+
+  // Banner
+  if (d.discord_user.banner) {
+    const ext = d.discord_user.banner.startsWith('a_') ? 'gif' : 'png';
+    const url = `https://cdn.discordapp.com/banners/${USER_ID}/${d.discord_user.banner}.${ext}?size=480`;
+    document.getElementById('bannerInner').innerHTML = `<img src="${url}" class="banner-img" alt="banner"/>`;
+  } else if (d.discord_user.banner_color) {
+    document.getElementById('bannerInner').style.background = d.discord_user.banner_color;
+  }
+
+  // Status & activities
+  applyStatus(d.discord_status);
+  renderActivities(d.activities || []);
+  renderSpotify(d.listening_to_spotify ? d.spotify : null);
+  renderBadges(d);
+  renderConnectedAccounts(d.discord_user.connected_accounts || []);
+  renderPlatforms(d.active_on_discord_desktop !== undefined ? {
+    desktop: d.active_on_discord_desktop ? (d.discord_status) : null,
+    mobile: d.active_on_discord_mobile ? (d.discord_status) : null,
+    web: d.active_on_discord_web ? (d.discord_status) : null,
+  } : null);
+
+  // About me
+  document.getElementById('aboutText').innerHTML = `17yo developer — I build not cool stuff`;
+
+  // Spotify stat
+  if (!d.listening_to_spotify) {
+    document.getElementById('statSpotify').textContent = 'Offline';
+  }
+}
+
+// ─── Escape HTML ─────────────────────────────────────────────────
+function escHtml(str) {
+  if (!str) return '';
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ─── Fetch initial data ──────────────────────────────────────────
+async function fetchInitial() {
+  try {
+    const res = await fetch(API);
+    const json = await res.json();
+    if (json.success) renderData(json.data);
+  } catch(e) {
+    document.getElementById('heroTag').textContent = 'Could not reach Lanyard API';
+  }
+}
+
+// ─── WebSocket ───────────────────────────────────────────────────
+function connectWS() {
+  ws = new WebSocket(WS_URL);
+  let heartbeatInterval = null;
+
+  ws.onopen = () => {};
+
+  ws.onmessage = (evt) => {
+    const msg = JSON.parse(evt.data);
+    if (msg.op === 1) {
+      heartbeatInterval = setInterval(() => {
+        ws.send(JSON.stringify({ op: 3 }));
+      }, msg.d.heartbeat_interval);
+      ws.send(JSON.stringify({ op: 2, d: { subscribe_to_id: USER_ID } }));
+    }
+    if (msg.op === 0) {
+      if (msg.t === 'INIT_STATE' || msg.t === 'PRESENCE_UPDATE') {
+        const data = msg.d[USER_ID] || msg.d;
+        if (data && data.discord_user) renderData(data);
       }
-      updateClock();
-      setInterval(updateClock, 1000);
-      lucide.createIcons();
     }
+  };
 
-    // Build the whole layout after data loads
-    function buildUI() {
-      // Create inner structure
-      const main = document.getElementById('app');
-      main.innerHTML = `
-        <!-- Hero placeholder (will be filled) -->
-        <section class="relative flex flex-col items-center pt-16 pb-12 px-4 overflow-hidden"></section>
-        <!-- About & Stats grid -->
-        <div id="cards-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-        <!-- Activity & Spotify grid -->
-        <div id="activity-spotify-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-        <!-- Badges -->
-        <div id="badges-container" class="flex flex-wrap gap-2"></div>
-        <!-- Decoder & Clock -->
-        <div class="flex flex-col md:flex-row gap-4">
-          <div id="decoder-container" class="flex-1"></div>
-          <div id="clock-container"></div>
-        </div>
-      `;
+  ws.onclose = () => {
+    if (heartbeatInterval) clearInterval(heartbeatInterval);
+    setTimeout(connectWS, 3000);
+  };
 
-      // Render all components
-      renderHero();
-      renderAboutCard();
-      renderStatsCard();
-      renderActivityCard();
-      renderSpotifyCard();
-      renderBadges();
-      renderSnowflakeDecoder();
-      renderClock();
+  ws.onerror = () => ws.close();
+}
 
-      // Re-init Lucide icons
-      lucide.createIcons();
+// ─── Toast ───────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
 
-      // Animate cards
-      document.querySelectorAll('.glass-card').forEach(card => {
-        motion.animate(card, { opacity: [0, 1], y: [20, 0] }, { duration: 0.6, delay: 0.1 });
-      });
-    }
+function copyID() {
+  navigator.clipboard.writeText(USER_ID).then(() => showToast('Discord ID copied!')).catch(() => {
+    prompt('Copy this ID:', USER_ID);
+  });
+}
 
-    // Initial fetch
-    fetch(`https://api.lanyard.rest/v1/users/${USER_ID}`)
-      .then(res => res.json())
-      .then(res => {
-        if (res.success) {
-          data = res.data;
-          buildUI();
-        } else {
-          document.getElementById('app').innerHTML = '<p class="text-center text-muted">User not found</p>';
-        }
-      })
-      .catch(err => {
-        console.error(err);
-        document.getElementById('app').innerHTML = '<p class="text-center text-muted">Failed to load profile</p>';
-      });
+function shareProfile() {
+  const url = window.location.href;
+  if (navigator.share) {
+    navigator.share({ title: 'Discord Profile', url });
+  } else {
+    navigator.clipboard.writeText(url).then(() => showToast('Profile URL copied!'));
+  }
+}
 
-    // WebSocket for live updates
-    function connectWebSocket() {
-      const ws = new WebSocket('wss://api.lanyard.rest/socket');
-      ws.onopen = () => {
-        ws.send(JSON.stringify({ op: 2, d: { subscribe_to_id: USER_ID } }));
-      };
-      ws.onmessage = (event) => {
-        const msg = JSON.parse(event.data);
-        if ((msg.op === 1 && msg.t === 'INIT_STATE') || (msg.op === 0 && msg.t === 'PRESENCE_UPDATE')) {
-          data = msg.d;
-          // Rebuild UI with updated data
-          document.getElementById('app').innerHTML = '';
-          buildUI();
-        }
-      };
-      ws.onclose = () => setTimeout(connectWebSocket, 5000);
-    }
-    connectWebSocket();
-  </script>
+// ─── Boot ────────────────────────────────────────────────────────
+fetchInitial();
+connectWS();
+
+// ─── CHAOS GLOW SYSTEM ───────────────────────────────────────────
+const GLOW_COLORS = [
+  '#5865F2','#8B5CF6','#3B82F6','#06B6D4','#10B981',
+  '#F59E0B','#EF4444','#EC4899','#A3E635','#F97316',
+  '#E879F9','#38BDF8','#fb7185','#34d399',
+];
+
+function randomBetween(a, b) { return a + Math.random() * (b - a); }
+
+// Floating glow blobs that appear and fade randomly
+function spawnGlowBlob() {
+  const blob = document.createElement('div');
+  const color = GLOW_COLORS[Math.floor(Math.random() * GLOW_COLORS.length)];
+  const size = randomBetween(40, 160);
+  const x = randomBetween(0, window.innerWidth - size);
+  const y = randomBetween(0, document.body.scrollHeight - size);
+  const duration = randomBetween(1200, 3000);
+
+  blob.style.cssText = `
+    position:absolute;
+    left:${x}px; top:${y}px;
+    width:${size}px; height:${size}px;
+    border-radius:50%;
+    background:${color};
+    filter:blur(${size * 0.55}px);
+    opacity:0;
+    pointer-events:none;
+    z-index:1;
+    transition: opacity ${duration * 0.35}ms ease, transform ${duration}ms ease;
+    transform: scale(0.5);
+  `;
+  document.body.appendChild(blob);
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      blob.style.opacity = randomBetween(0.04, 0.13);
+      blob.style.transform = `scale(${randomBetween(0.9, 1.4)})`;
+    });
+  });
+
+  setTimeout(() => {
+    blob.style.opacity = '0';
+    blob.style.transform = 'scale(0.3)';
+    setTimeout(() => blob.remove(), duration * 0.5);
+  }, duration * 0.6);
+}
+
+// Spark dots that shoot across the screen
+function spawnSpark() {
+  const spark = document.createElement('div');
+  const color = GLOW_COLORS[Math.floor(Math.random() * GLOW_COLORS.length)];
+  const size = randomBetween(3, 9);
+  const startX = randomBetween(0, window.innerWidth);
+  const startY = randomBetween(0, window.innerHeight) + window.scrollY;
+  const dx = randomBetween(-200, 200);
+  const dy = randomBetween(-200, 200);
+  const dur = randomBetween(600, 1400);
+
+  spark.style.cssText = `
+    position:absolute;
+    left:${startX}px; top:${startY}px;
+    width:${size}px; height:${size}px;
+    border-radius:50%;
+    background:${color};
+    box-shadow: 0 0 ${size * 1.5}px ${size * 0.4}px ${color};
+    opacity:0;
+    pointer-events:none;
+    z-index:3;
+    transition: opacity ${dur * 0.2}ms ease, transform ${dur}ms cubic-bezier(0.25,0.46,0.45,0.94);
+  `;
+  document.body.appendChild(spark);
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      spark.style.opacity = '1';
+      spark.style.transform = `translate(${dx}px, ${dy}px) scale(0)`;
+    });
+  });
+
+  setTimeout(() => spark.remove(), dur + 100);
+}
+
+// Glowing border flash on random cards
+function flashRandomCard() {
+  const cards = document.querySelectorAll('.card');
+  if (!cards.length) return;
+  const card = cards[Math.floor(Math.random() * cards.length)];
+  const color = GLOW_COLORS[Math.floor(Math.random() * GLOW_COLORS.length)];
+  const prev = card.style.boxShadow;
+  const prevBorder = card.style.borderColor;
+  card.style.transition = 'box-shadow 0.3s, border-color 0.3s';
+  card.style.boxShadow = `0 0 18px 2px ${color}22, 0 0 40px 4px ${color}0d`;
+  card.style.borderColor = color + '33';
+  setTimeout(() => {
+    card.style.boxShadow = prev;
+    card.style.borderColor = prevBorder;
+  }, randomBetween(300, 900));
+}
+
+// Random glow ring around avatar
+function flashAvatarRing() {
+  const ring = document.querySelector('.avatar-ring');
+  if (!ring) return;
+  const c1 = GLOW_COLORS[Math.floor(Math.random() * GLOW_COLORS.length)];
+  const c2 = GLOW_COLORS[Math.floor(Math.random() * GLOW_COLORS.length)];
+  ring.style.background = `conic-gradient(from 0deg, ${c1}, ${c2}, ${c1})`;
+  setTimeout(() => {
+    ring.style.background = 'conic-gradient(from 0deg, var(--primary), var(--accent), #3B82F6, var(--primary))';
+  }, randomBetween(400, 1200));
+}
+
+// Glowing text flash on hero name
+function flashHeroName() {
+  const el = document.getElementById('heroName');
+  if (!el) return;
+  const color = GLOW_COLORS[Math.floor(Math.random() * GLOW_COLORS.length)];
+  el.style.transition = 'text-shadow 0.2s';
+  el.style.textShadow = `0 0 12px ${color}66, 0 0 24px ${color}33`;
+  setTimeout(() => { el.style.textShadow = 'none'; }, randomBetween(200, 700));
+}
+
+// Random stat value glow
+function flashStat() {
+  const stats = document.querySelectorAll('.stat-value');
+  if (!stats.length) return;
+  const el = stats[Math.floor(Math.random() * stats.length)];
+  const color = GLOW_COLORS[Math.floor(Math.random() * GLOW_COLORS.length)];
+  const prev = el.style.textShadow;
+  el.style.transition = 'text-shadow 0.25s';
+  el.style.textShadow = `0 0 8px ${color}55`;
+  setTimeout(() => { el.style.textShadow = prev; }, randomBetween(300, 800));
+}
+
+// Chaos scheduler — fires random effects at random intervals
+function scheduleNextChaos() {
+  const delay = randomBetween(80, 500);
+  setTimeout(() => {
+    const roll = Math.random();
+    if (roll < 0.30) spawnGlowBlob();
+    else if (roll < 0.55) spawnSpark();
+    else if (roll < 0.70) flashRandomCard();
+    else if (roll < 0.80) flashAvatarRing();
+    else if (roll < 0.90) flashHeroName();
+    else flashStat();
+    scheduleNextChaos();
+  }, delay);
+}
+
+// Occasional burst of multiple sparks
+function spawnBurst() {
+  const count = Math.floor(randomBetween(4, 12));
+  for (let i = 0; i < count; i++) {
+    setTimeout(spawnSpark, i * randomBetween(20, 80));
+  }
+  setTimeout(spawnBurst, randomBetween(2000, 6000));
+}
+
+scheduleNextChaos();
+spawnBurst();
+</script>
 </body>
 </html>
