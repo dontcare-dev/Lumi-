@@ -13,18 +13,18 @@
   :root {
     --bg: #09090B;
     --surface: #111113;
-    --surface2: #18181B;
+    --surface2: #1c1c22;
     --border: rgba(255,255,255,0.07);
     --primary: #5865F2;
     --accent: #8B5CF6;
     --green: #23A55A;
     --yellow: #F0B232;
     --red: #F23F42;
-    --text: #FAFAFA;
-    --muted: #A1A1AA;
+    --text: #FFFFFF;
+    --muted: #C4C4CF;
     --spotify: #1DB954;
-    --glass: rgba(255,255,255,0.04);
-    --glass-border: rgba(255,255,255,0.08);
+    --glass: rgba(255,255,255,0.07);
+    --glass-border: rgba(255,255,255,0.13);
   }
 
   html { scroll-behavior: smooth; overflow-x: hidden; }
@@ -118,7 +118,7 @@
     font-size: clamp(2rem, 6vw, 3.2rem);
     font-weight: 600;
     letter-spacing: -0.05em;
-    background: linear-gradient(135deg, #fff 30%, var(--muted));
+    background: linear-gradient(135deg, #ffffff 0%, #e0e8ff 60%, #c8d8ff 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -263,7 +263,7 @@
   @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
 
   /* ── About me card ── */
-  .about-text { color: var(--muted); line-height: 1.75; font-size: 0.9rem; }
+  .about-text { color: #c8c8d8; line-height: 1.75; font-size: 0.9rem; }
 
   /* ── Activity card ── */
   .activity-wrap { display: flex; gap: 14px; align-items: flex-start; }
@@ -588,19 +588,19 @@
         <div class="stats-grid" id="statsGrid">
           <div class="stat-item">
             <div class="stat-value primary" id="statStatus">—</div>
-            <div class="stat-label">Status</div>
+            <div class="stat-label" style="color:#b0b0c8">Status</div>
           </div>
           <div class="stat-item">
             <div class="stat-value accent" id="statActivities">0</div>
-            <div class="stat-label">Activities</div>
+            <div class="stat-label" style="color:#b0b0c8">Activities</div>
           </div>
           <div class="stat-item">
             <div class="stat-value green" id="statMember">—</div>
-            <div class="stat-label">Member Since</div>
+            <div class="stat-label" style="color:#b0b0c8">Member Since</div>
           </div>
           <div class="stat-item">
             <div class="stat-value spotify" id="statSpotify">—</div>
-            <div class="stat-label">Spotify</div>
+            <div class="stat-label" style="color:#b0b0c8">Spotify</div>
           </div>
         </div>
         <div class="platform-row" id="platformRow"></div>
