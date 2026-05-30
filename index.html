@@ -6,7 +6,7 @@
 <title>Discord Profile</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -33,7 +33,7 @@
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     min-height: 100vh;
     overflow-x: hidden;
     max-width: 100vw;
@@ -114,10 +114,10 @@
   .status-dot.offline { background: #4e5058; }
 
   .hero-name {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Outfit', sans-serif;
     font-size: clamp(2rem, 6vw, 3.2rem);
-    font-weight: 800;
-    letter-spacing: -0.03em;
+    font-weight: 600;
+    letter-spacing: -0.05em;
     background: linear-gradient(135deg, #fff 30%, var(--muted));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -164,7 +164,7 @@
     padding: 9px 18px;
     border-radius: 10px;
     font-size: 0.83rem;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-weight: 500;
     cursor: pointer;
     border: none;
@@ -242,9 +242,9 @@
   .card-delay-5 { animation-delay: 0.5s; }
 
   .card-label {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Outfit', sans-serif;
     font-size: 0.7rem;
-    font-weight: 700;
+    font-weight: 600;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--muted);
@@ -273,8 +273,8 @@
   }
   .activity-info { flex: 1; min-width: 0; }
   .activity-name {
-    font-family: 'Syne', sans-serif;
-    font-weight: 700; font-size: 0.95rem;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600; font-size: 0.95rem;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     margin-bottom: 3px;
   }
@@ -302,8 +302,8 @@
   @keyframes albumPulse { 0%,100%{box-shadow:0 8px 24px rgba(0,0,0,0.4)} 50%{box-shadow:0 8px 32px rgba(29,185,84,0.25)} }
   .spotify-info { flex: 1; min-width: 0; }
   .spotify-track {
-    font-family: 'Syne', sans-serif;
-    font-weight: 700; font-size: 1rem;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600; font-size: 1rem;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     margin-bottom: 2px;
   }
@@ -328,7 +328,7 @@
   /* ── Stats card ── */
   .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .stat-item { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 14px; border: 1px solid rgba(255,255,255,0.05); }
-  .stat-value { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 800; margin-bottom: 2px; }
+  .stat-value { font-family: 'Outfit', sans-serif; font-size: 1.2rem; font-weight: 600; margin-bottom: 2px; }
   .stat-label { font-size: 0.74rem; color: var(--muted); letter-spacing: 0.02em; }
   .stat-value.primary { color: var(--primary); }
   .stat-value.accent { color: var(--accent); }
@@ -337,10 +337,10 @@
 
   /* ── Clock card ── */
   .clock-display {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Outfit', sans-serif;
     font-size: 2.8rem;
-    font-weight: 800;
-    letter-spacing: -0.04em;
+    font-weight: 600;
+    letter-spacing: -0.05em;
     background: linear-gradient(135deg, var(--text), var(--muted));
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -352,7 +352,7 @@
 
   /* ── ID card ── */
   .id-display {
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 0.88rem;
     color: var(--muted);
     background: rgba(255,255,255,0.03);
